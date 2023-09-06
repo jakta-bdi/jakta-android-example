@@ -51,4 +51,6 @@ object TicTacToeLiterals {
     val e by OwnName
     val o by OwnName
     val End by OwnName
+    val Victory by OwnName
+    val stop by OwnName
 }

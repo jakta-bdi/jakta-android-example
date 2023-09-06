@@ -10,6 +10,7 @@ import it.unibo.jakta.agents.bdi.dsl.plans.BodyScope
 import it.unibo.jakta.agents.bdi.dsl.plans.PlansScope
 import it.unibo.jakta.agents.bdi.executionstrategies.ExecutionStrategy
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.End
+import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.Victory
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.aligned
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.allPossibleCombinationsOf
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.antidiagonal
@@ -19,6 +20,7 @@ import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.e
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.horizontal
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.invoke
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.o
+import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.stop
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.turn
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.vertical
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.x
@@ -46,10 +48,11 @@ fun ticTacToe(n: Int = 3, textView: TextView, logView: TextView) = mas {
         from(GridEnvironment(n, textView, logView))
         actions {
             action(Put)
-            action("End", 1) {
-                val message = argument<Atom>(0).value
-                logView.post { logView.text = "[${this.sender}] $message" }
+            action("End", 0) {
                 this.updateData(mapOf("changeTurn" to "other"))
+            }
+            action("Victory", 0) {
+                logView.post { logView.text = "[${this.sender}] I Won!" }
             }
         }
     }
@@ -79,11 +82,15 @@ fun MasScope.player(mySymbol: String, otherSymbol: String, gridSize: Int) = agen
 
 fun PlansScope.detectVictory(mySymbol: String, gridSize: Int) =
     detectLine(mySymbol, mySymbol, gridSize) {
-        execute(End("I won!"))
-        execute("stop")
+        execute(End)
+        execute(Victory)
+        execute(stop)
     }
 fun PlansScope.detectDefeat(mySymbol: String, otherSymbol: String, gridSize: Int) =
-    detectLine(mySymbol, otherSymbol, gridSize) { execute(End("I lost!")) }
+    detectLine(mySymbol, otherSymbol, gridSize) {
+        execute(End)
+        execute(stop)
+    }
 
 fun PlansScope.detectLine(mySymbol: String, symbol: String, size: Int, action: BodyScope.() -> Unit) =
     +turn(mySymbol) onlyIf { aligned((1..size).map { cell(symbol) }) } then(action)
