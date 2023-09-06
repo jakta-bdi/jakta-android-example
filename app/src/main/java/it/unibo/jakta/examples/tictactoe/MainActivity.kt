@@ -4,15 +4,13 @@ import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
-import it.unibo.jakta.examples.tictactoe.R
+import it.unibo.jakta.agents.bdi.Mas
 import it.unibo.jakta.examples.tictactoe.databinding.ActivityMainBinding
 import it.unibo.jakta.examples.tictactoe.model.ticTacToe
 
@@ -35,20 +33,31 @@ class MainActivity : AppCompatActivity() {
         //setupActionBarWithNavController(navController, appBarConfiguration)
 
         val startBtn = findViewById<Button>(R.id.start_btn)
+        val tv = findViewById<TextView>(R.id.gridBtn)
+        val lv = findViewById<TextView>(R.id.logText)
+        val gridSize = findViewById<EditText>(R.id.gridSize)
 
         startBtn.setOnClickListener {
-            val tv = findViewById<TextView>(R.id.gridBtn)
-            val lv = findViewById<TextView>(R.id.logText)
-            val system = ticTacToe(3, tv, lv)
-            tv.text = "Started"
-            system.start()
+            when (startBtn.text) {
+                "Start" -> {
+                    val system = ticTacToe(Integer.parseInt(gridSize.text.toString()), tv, lv)
+                    tv.text = ""
+                    lv.text = ""
+                    gridSize.isEnabled = false
+                    tv.text = "Started"
+                    startBtn.text = "Stop"
+                    system.start()
+                }
+                "Stop" -> {
+                    tv.text = ""
+                    lv.text = ""
+                    gridSize.isEnabled = true
+                    startBtn.text = "Start"
+                }
+            }
+
         }
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAnchorView(R.id.fab)
-                    .setAction("Action", null).show()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

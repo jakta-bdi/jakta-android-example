@@ -8,6 +8,7 @@ import it.unibo.jakta.agents.bdi.dsl.beliefs.fromSelf
 import it.unibo.jakta.agents.bdi.dsl.mas
 import it.unibo.jakta.agents.bdi.dsl.plans.BodyScope
 import it.unibo.jakta.agents.bdi.dsl.plans.PlansScope
+import it.unibo.jakta.agents.bdi.executionstrategies.ExecutionStrategy
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.End
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.aligned
 import it.unibo.jakta.examples.tictactoe.model.TicTacToeLiterals.allPossibleCombinationsOf
@@ -49,12 +50,12 @@ fun ticTacToe(n: Int = 3, textView: TextView, logView: TextView) = mas {
                 val message = argument<Atom>(0).value
                 logView.post { logView.text = "[${this.sender}] $message" }
                 this.updateData(mapOf("changeTurn" to "other"))
-                this.removeAgent(this.sender)
             }
         }
     }
     player(mySymbol = o, otherSymbol = x, gridSize = n)
     player(mySymbol = x, otherSymbol = o, gridSize = n)
+    executionStrategy { ExecutionStrategy.oneThreadPerAgent() }
 }
 
 fun MasScope.player(mySymbol: String, otherSymbol: String, gridSize: Int) = agent("$mySymbol-agent") {
@@ -77,7 +78,10 @@ fun MasScope.player(mySymbol: String, otherSymbol: String, gridSize: Int) = agen
 }
 
 fun PlansScope.detectVictory(mySymbol: String, gridSize: Int) =
-    detectLine(mySymbol, mySymbol, gridSize) { execute(End("I won!")) }
+    detectLine(mySymbol, mySymbol, gridSize) {
+        execute(End("I won!"))
+        execute("stop")
+    }
 fun PlansScope.detectDefeat(mySymbol: String, otherSymbol: String, gridSize: Int) =
     detectLine(mySymbol, otherSymbol, gridSize) { execute(End("I lost!")) }
 

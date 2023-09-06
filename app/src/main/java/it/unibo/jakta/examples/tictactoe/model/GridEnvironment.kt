@@ -12,6 +12,7 @@ import it.unibo.jakta.agents.bdi.perception.Perception
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
+import kotlin.random.Random
 
 class GridEnvironment(
     private val n: Int,
@@ -28,12 +29,15 @@ class GridEnvironment(
 
     companion object {
         internal fun createGrid(n: Int): Array<CharArray> {
-            Array(n) { CharArray(n) { 'e' } }
-            return arrayOf(
-                charArrayOf('e', 'e', 'e'),
-                charArrayOf('x', 'e', 'e'),
-                charArrayOf('e', 'e', 'e'),
-            )
+            val grid = Array(n) { CharArray(n) { 'e' } }
+            val end = n/2
+            (1 until end).map {
+                println("$it and $end")
+                Random.nextInt(n) to Random.nextInt(n)
+            }.forEach { (x, y) ->
+                grid[x][y] = 'x'
+            }
+            return grid
         }
 
         internal fun Array<CharArray>.copy() =
@@ -55,8 +59,8 @@ class GridEnvironment(
             var grid = ""
             result.grid.forEach { grid += "${it.let { String(it) + " " }} \n" }
             textView.post { textView.text = grid }
-            logView.post { logView.text = "Putting ${cell.third} at (${cell.first}, ${cell.second})" }
-            Thread.sleep(1000)
+            //logView.post { logView.text = "Putting ${cell.third} at (${cell.first}, ${cell.second})" }
+            //Thread.sleep(500)
             newEnv = result
         }
         if ("changeTurn" in newData) {

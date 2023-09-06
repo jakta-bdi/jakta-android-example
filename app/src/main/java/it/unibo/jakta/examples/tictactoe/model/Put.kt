@@ -9,7 +9,7 @@ object Put : AbstractExternalAction(Signature("put", 3)) {
         val x = request.arguments[0].castToInteger().value.toInt()
         val y = request.arguments[1].castToInteger().value.toInt()
         val z = request.arguments[2].castToAtom().value[0]
-        println("Putting $z at ($x, $y)")
+        //println("Putting $z at ($x, $y)")
         updateData(mapOf("cell" to Triple(x, y, z)))
     }
 }
