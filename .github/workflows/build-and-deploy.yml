@@ -1,0 +1,38 @@
+name: CI/CD Process
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows, macos, ubuntu]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: adopt
+          java-version: 21
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+      - name: Build Jakta Examples
+        shell: bash
+        run: ./gradlew build
+  success:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    if: >-
+      always() && (
+        contains(join(needs.*.result, ','), 'failure')
+        || !contains(join(needs.*.result, ','), 'cancelled')
+      )
+    steps:
+      - name: Verify that there were no failures
+        run: ${{ !contains(join(needs.*.result, ','), 'failure') }}
