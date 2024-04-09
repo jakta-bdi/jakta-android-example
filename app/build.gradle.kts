@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "it.unibo.jakta.examples.tictactoe"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "it.unibo.jakta.examples.tictactoe"
         minSdk = 25
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
