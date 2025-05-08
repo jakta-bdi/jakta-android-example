@@ -58,6 +58,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    implementation("it.unibo.jakta:jakta-dsl:0.11.4")
+    implementation("it.unibo.jakta:jakta-dsl:0.13.19")
 
 }
